@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tech_house_music>
+    <genre>tech house</genre>
+    <description>
+        Le tech house est un genre musical dynamique et rythmé, combinant des éléments de techno
+        avec des grooves de house. C'est une musique qui évoque l'énergie des clubs et des pistes de danse,
+        idéale pour faire vibrer la foule jusqu'au matin. La tech house est une fusion captivante
+        de rythmes techno et de basses house, créant un son addictif qui séduit les amateurs de musique électronique.
+    </description>
+    <artists>
+        <artist>John Doe</artist>
+        <artist>Mary Smith</artist>
+        <artist>David Johnson</artist>
+        <artist>Anna Davis</artist>
+        <artist>John Doe</artist>
+        <artist>Anna Davis</artist>
+    </artists>
+    <popular_tracks>
+        <track>Lights On</track>
+        <track>Beat It</track>
+        <track>Deep Groove</track>
+        <track>Lights On</track>
+        <track>Beat It</track>
+        <track>Deep Groove</track>
+    </popular_tracks>
+    <featured_labels>
+        <label>TechVibes Records</label>
+        <label>BeatBox Productions</label>
+        <label>GrooveMaster</label>
+        <label>TechVibes Records</label>
+        <label>BeatBox Productions</label>
+    </featured_labels>
+</tech_house_music>

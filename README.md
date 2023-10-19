@@ -19,4 +19,3 @@ Le fichier "showDocumentFind.php" permet d'affichier le tableau avec les documen
 Le fichier "showContentFile.php" permet de voire le contenue du fichier que nous avons sélectionnés après le résultat de la recherche du mot clé.
 <br>
 Le fichier utils.php contient les diffentes fonctions comme la tokenisation() ou la recusivité
-# recherche-information
