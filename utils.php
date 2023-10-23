@@ -28,7 +28,7 @@ function upload(array $files): string|null
         // Ici on lui donne un id unique et le path vers quelle il doit être stocké
         $nameDirectory = "uploads/" . strtok($files['full_path'][$i], '/');
 
-        // Si le dossier n'existe pas on le cree.
+        // Si le dossier n'existe pas on le crée.
         if (!is_dir($nameDirectory)) {
             mkdir($nameDirectory, 0700);
         }
@@ -80,10 +80,11 @@ function explorerDir(string $path, $cnx): void
 		}
 	}
 	closedir($folder);
+    echo "<a type='btn' class='btn btn-primary' href='./index.php'>Retour à l'accueil</a>";
 }
 
 /**
- * Récupere les stops words
+ * Récupérer les stops words
  *
  * @return array
  */
@@ -100,7 +101,7 @@ function getStopWords(): array
  */
 function isACorrectFile(string $extension): bool
 {
-    $validExtensions = ['txt', 'html', 'xml'];
+    $validExtensions = ['txt', 'html', 'xml', 'pdf', 'docx'];
 
     return in_array($extension, $validExtensions);
 }
@@ -111,14 +112,16 @@ function getContentFile(string $path): string
 
     return match ($pathInfo['extension']) {
         'html' => getWordsFileHtml($path),
-        'txt' =>  strtolower(file_get_contents($path)),
+        'txt' => strtolower(file_get_contents($path)),
         'xml' => getWordsFileXML($path),
+        'pdf' => getWordsFilePDForDoc($path, 'pdftohtml -i -noframes', 'pdf'),
+        'docx' => getWordsFilePDForDoc($path, 'pandoc -s', 'docx'),
         default => '',
     };
 }
 
 /**
- * Va permettre la tokenisation en gardent que les mots clé et supprimer les stopowrds
+ * Va permettre la tokenisation en gardent que les mots clé et supprimer les stopWords
  *
  * @param string $path
  * @return array
@@ -136,7 +139,9 @@ function tokenisation(string $path): array
     $tokenisation = preg_split('/[^A-Za-zÀ-ÖØ-öø-ÿ]+/u', $contentFile, -1, PREG_SPLIT_NO_EMPTY);
     $tokenisation = array_filter($tokenisation, static fn (string $word) => strlen($word) > 2);
 
-    return array_count_values(array_diff($tokenisation, $stopWords));
+    $words = array_count_values(array_diff($tokenisation, $stopWords));
+
+    return transformWordsWithLemmatization($words);
 }
 
 function getWordsFileXML(string $path): string
@@ -168,11 +173,11 @@ function getWordsFileHtml(string $path): string
 
 function pagination(int $totElement, string $word, int $page = 1): void
 {
-    // On define le nombre d'élement par page
+    // On define le nombre d'élément par page
     $nbElementInTable = 5;
-    //On récuper le nb total élement vua la function sutué dans Utils.php
+    //On récurer le nb total element vua la function situé dans Utils.php
 
-    // On calcule le nombre de pages total le resultat va étre mis au supériere.
+    // On calcule le nombre de pages total le résultat va être mis au supérieure.
     $pages = ceil($totElement / $nbElementInTable);
 
     echo "<li class='page-item'>" .
@@ -213,7 +218,7 @@ function getTableUploadedFiles(array $wordsFiltered, string $path, string $title
 
 function getHeaderTableFilesUploaded(): void
 {
-    echo "<table class='table table-bordered table-hover text-center mx-auto' style='max-width: 800px;'>
+    echo "<table id='doc-upload' class='table table-bordered table-hover text-center mx-auto' style='max-width: 800px;'>
             <thead>
                 <tr>
                     <th>Nom du fichier</th>
@@ -223,4 +228,82 @@ function getHeaderTableFilesUploaded(): void
                 </tr>
             </thead>
     ";
+}
+
+function encodingData(array $data): array
+{
+    $targetEncoding = 'UTF-8';
+
+    return array_map(function(string $text) use ($targetEncoding) {
+        $detectedEncoding = mb_detect_encoding($text, 'UTF-8, ISO-8859-1');
+
+        return mb_convert_encoding($text, $targetEncoding, $detectedEncoding);
+    }, $data);
+}
+
+
+function getLemmatization(): array
+{
+    $csvFile = './Lexique.csv';
+
+    $lemmatisation = [];
+    if (($handle = fopen($csvFile, 'r')) !== false) {
+        while (($data = fgetcsv($handle, 0, ';', '"', "\n")) !== false) {
+            $data = encodingData($data);
+            $lemmatisation[$data[0]] = $data[1];
+        }
+        fclose($handle);
+    }
+
+    return $lemmatisation;
+}
+
+function transformWordsWithLemmatization(array $words): array
+{
+    $wordsLemmatized = [];
+    $lemmatisation = getLemmatization();
+
+    foreach ($words as $word => $frequence) {
+        $key = array_key_exists($word, $lemmatisation) ? $lemmatisation[$word] : $word;
+        $wordsLemmatized[$key] = $frequence;
+    }
+
+    return $wordsLemmatized;
+}
+
+function fixEncoding(string $text): string
+{
+    $detectedEncoding = mb_detect_encoding($text, 'UTF-8, ISO-8859-1');
+    return mb_convert_encoding($text, 'UTF-8', $detectedEncoding);
+}
+
+function getWordsFilePDForDoc(string $path, string $command, string $extension): string
+{
+    error_reporting(0); // n'affiche pas les warning
+    $parameterCommand = '';
+    $htmlOutputPath = 'output.html';
+
+    if ($extension === 'docx') {
+        $infos = pathinfo($path);
+        $htmlOutputPath =  $infos['dirname'] . "/" . $infos['filename'] . ".html";
+        $parameterCommand = '-o ';
+        unlink($infos['dirname'] . "/" . $infos['basename']);
+    }
+
+    var_dump($htmlOutputPath);
+    shell_exec($command . ' ' .  $path . ' ' . $parameterCommand . $htmlOutputPath);
+
+    $htmlContent = strtolower(file_get_contents($htmlOutputPath));
+    $textWithoutTags = strip_tags($htmlContent);
+    $words = preg_split('/[^A-Za-zÀ-ÖØ-öø-ÿ]+/u', $textWithoutTags, -1, PREG_SPLIT_NO_EMPTY);
+
+    $cleanedWords = encodingData($words);
+    $cleanedWords = array_map(function (string $word) {
+        return str_replace('&#160;', '', $word);
+    }, $cleanedWords);
+    if ($extension !== 'docx') {
+        unlink('./output.html');
+    }
+
+    return implode(' ', $cleanedWords);
 }

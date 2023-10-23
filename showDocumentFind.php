@@ -107,16 +107,12 @@
         <nav>
             <ul class="pagination justify-content-center">
                 <?php
-
                     if (count($documentsFind) > 5) {
                         pagination(count($documentsFind), $_GET['word'], $page);
                     }
                 ?>
             </ul>
         </nav>
-        <br><br>
-        
-        <a type='btn' class='btn btn-primary' href='./index.php'>Retour à l'accueil</a>
     </div>
 </body>
 </html>

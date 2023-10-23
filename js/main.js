@@ -24,4 +24,16 @@ $(document).ready(function () {
         $('#modalNuage').modal('show')
         showContentModal(idDocument)
     });
+    showLoader()
 });
+
+function showLoader() {
+    const loaderButton = $("<div class='spinner-border text-primary' role='status'>" +
+        "<span class='sr-only'></span>" +
+        "</div>"
+    )
+
+    $('#btn-upload').on('click', function (e) {
+        $('#div-loader').append(loaderButton)
+    })
+}

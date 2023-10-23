@@ -16,9 +16,6 @@
 </head>
 <body>
     <div class="container mt-5">
-        <div class="text-end">
-            <a type='btn' href="./form.html" class="btn btn-primary">Upload</a>
-        </div>
         <h1 class="text-center">MyEngine</h1>
         <br>
         <div>
@@ -26,10 +23,17 @@
                 <div class="d-flex justify-content-center">
                     <div class="mb-3" style="max-width: 400px;">
                         <div class="input-group">
-                            <input required="required" type="search" class="form-control rounded-start" placeholder="Rechercher" aria-label="Rechercher" name="word">
+                            <input required="required" type="search"class="form-control rounded-start"
+                                placeholder="Rechercher" aria-label="Rechercher" name="word"
+                            >
                             <button class="btn btn-primary rounded-end" type="submit">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="bi bi-search" width="1em" height="1em" style="vertical-align: middle;">
-                                    <path fill-rule="evenodd" d="M6.5 11a4.5 4.5 0 117 0 4.5 4.5 0 01-7 0zM15 9.5A5.5 5.5 0 104.5 9a5.5 5.5 0 0010.089 2.966l3.56 3.56a.5.5 0 00.707-.708l-3.56-3.56A5.472 5.472 0 0015 9.5z" clip-rule="evenodd" />
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    class="bi bi-search" width="1em" height="1em" style="vertical-align: middle;"
+                                >
+                                    <path fill-rule="evenodd" d="M6.5 11a4.5 4.5 0 117 0 4.5 4.5 0 01-7
+                                        0zM15 9.5A5.5 5.5 0 104.5 9a5.5 5.5 0 0010.089 2.966l3.56
+                                        3.56a.5.5 0 00.707-.708l-3.56-3.56A5.472 5.472 0 0015 9.5z" clip-rule="evenodd"
+                                    />
                                 </svg>
                             </button>
                         </div>

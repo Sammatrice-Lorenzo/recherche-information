@@ -2,11 +2,11 @@
 
 include 'cnx.php';
 
-function insertionDocument(PDO $cnx, string $title, string $pahtFile): void
+function insertionDocument(PDO $cnx, string $title, string $pathFile): void
 {
     $insertWord = $cnx->prepare('INSERT INTO document (titre, path) VALUES (?, ?)');
     $insertWord->bindValue(1, $title);
-    $insertWord->bindValue(2, $pahtFile);
+    $insertWord->bindValue(2, $pathFile);
     $insertWord->execute();
 }
 
@@ -51,7 +51,7 @@ function getWordId(PDO $cnx, string $word): int
 }
 
 /**
- * On insere le document et les mots et la liaison entre les 2
+ * On insère le document et les mots et la liaison entre les 2
  *
  * @param string $path
  * @param string $title
@@ -62,9 +62,7 @@ function insertionWordsAndDocument(string $path, string $title, PDO $cnx): void
 {
     $words = tokenisation($path);
 
-    // echo "Pour le fichier " . $title . " " .  count($words) . " mots ont été filtrée";
     getTableUploadedFiles($words, $path, $title);
-    echo "<br>";
 
     insertionDocument($cnx, $title, $path);
     $idDoc = getDocumentId($cnx, $title);
@@ -101,7 +99,9 @@ function findWord(PDO $cnx, string $word): array
     $documentsFind = [];
 
     foreach ($result as $wordBdd) {
-        $wordAndDocuments = $cnx->prepare('SELECT frequence, idDocument FROM document_mot WHERE idMot = ? ORDER BY frequence DESC');
+        $wordAndDocuments = $cnx->prepare(
+            'SELECT frequence, idDocument FROM document_mot WHERE idMot = ? ORDER BY frequence DESC'
+        );
         $wordAndDocuments->bindValue(1, $wordBdd['id'], PDO::PARAM_INT);
         $wordAndDocuments->execute();
 
@@ -124,19 +124,19 @@ function findWord(PDO $cnx, string $word): array
 }
 
 /**
- * Cette fonction permet de recuper les mots d'un document
+ * Cette fonction permet de récupérer les mots d'un document
  *
  * @param PDO $cnx
- * @param integer $idDcoument
+ * @param integer $idDocument
  * @return array
  */
-function getWordsByDocument(PDO $cnx, int $idDcoument): array
+function getWordsByDocument(PDO $cnx, int $idDocument): array
 {
     $wordByDocument = $cnx->prepare(
         "SELECT idDocument, idMot, m.mot, frequence FROM `document_mot` INNER JOIN mot m on m.id = idMot
         WHERE idDocument = ? and frequence >= 2 ORDER BY frequence DESC"
     );
-    $wordByDocument->bindValue(1, $idDcoument);
+    $wordByDocument->bindValue(1, $idDocument);
     $wordByDocument->execute();
 
     return $wordByDocument->fetchAll();

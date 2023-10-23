@@ -15,11 +15,24 @@
 
 <div class="text-center">
     <?php
-    
         include 'utils.php';
         $path = upload($_FILES['uploads']);
         explorerDir($path, $cnx);
+
+        updatePathForFileWord($cnx);
+        function updatePathForFileWord(PDO $cnx): void
+        {
+            $filesWord = $cnx->prepare("SELECT * FROM document WHERE titre LIKE '%.docx'");
+            $filesWord->execute();
+
+            foreach ($filesWord->fetchAll() as $file) {
+                $update = $cnx->prepare('UPDATE document SET titre =?, path=? WHERE id = ?');
+
+                $update->bindValue(1, str_replace('docx', 'html', $file['titre']));
+                $update->bindValue(2, str_replace('docx', 'html', $file['path']));
+                $update->bindValue(3, $file['id']);
+                $update->execute();
+            }
+        }
     ?>
-    <br><br>
-    <a type='btn' class='btn btn-primary' href='./index.php'>Retour à l'acceuil</a>
 </div>

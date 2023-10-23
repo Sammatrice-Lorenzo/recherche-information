@@ -1,5 +1,0 @@
-Je suis Lorenzo demain je vais travailler en télétravail.
-Alors avant demain vous aussi vous allez travailler et après on se demande comment on peut clean le code propement.
-=> __#
-A,./Saluts
-J'aime les desserts
