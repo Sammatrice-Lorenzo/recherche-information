@@ -19,11 +19,10 @@ include './utils.php';
 // }, $cleanedWords);
 
     // shell_exec("pdftohtml -i -noframes $path $htmlOutputPath");
-$string = getWordsFilePDForDoc('./uploads/fileIndexer/document.docx', 'pandoc -s', 'docx');
+// $string = getWordsFilePDForDoc('./uploads/fileIndexer/document.docx', 'pandoc -s', 'docx');
 // $string = getWordsFilePDForDoc('./readFiles/test.pdf', 'pdftohtml -i -noframes', 'pdf');
 // var_dump(explode(' ', $string));
 
 
 // $string = getWordsFileHtml('./output.html');
 // var_dump(explode(' ', $string));
-

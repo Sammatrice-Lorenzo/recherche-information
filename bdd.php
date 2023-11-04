@@ -141,3 +141,12 @@ function getWordsByDocument(PDO $cnx, int $idDocument): array
 
     return $wordByDocument->fetchAll();
 }
+
+function getSimilarWords(PDO $cnx, string $wordSearched): array
+{
+    $similarWords = $cnx->prepare("SELECT mot FROM mot WHERE SOUNDEX(mot) = SOUNDEX(?) LIMIT 10");
+    $similarWords->bindValue(1, $wordSearched);
+    $similarWords->execute();
+
+    return $similarWords->fetchAll();
+}

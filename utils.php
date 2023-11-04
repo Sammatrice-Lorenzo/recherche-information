@@ -80,7 +80,6 @@ function explorerDir(string $path, $cnx): void
 		}
 	}
 	closedir($folder);
-    echo "<a type='btn' class='btn btn-primary' href='./index.php'>Retour à l'accueil</a>";
 }
 
 /**
@@ -162,10 +161,13 @@ function getWordsFileXML(string $path): string
 function getWordsFileHtml(string $path): string
 {
     $contentFile = strtolower(file_get_contents($path));
-    $textWithoutTags = strip_tags($contentFile);
+    $text = strip_tags($contentFile, "<style>");
+    $substring = substr($text, strpos($text, "<style"), strpos($text,"</style>") + 2);
+
+    $text = str_replace($substring, "", $text);
     $textFiltered = array_filter(
-        explode(" ", $textWithoutTags),
-        static fn (string $text) => $text !== "" && $text !== "\n"
+        explode(" ", $text),
+        static fn (string $text) => $text !== "" && $text !== "\n" && !str_starts_with($text, '6546')
     );
 
     return implode(" ", $textFiltered);
@@ -281,29 +283,35 @@ function getWordsFilePDForDoc(string $path, string $command, string $extension):
 {
     error_reporting(0); // n'affiche pas les warning
     $parameterCommand = '';
-    $htmlOutputPath = 'output.html';
+    $infos = pathinfo($path);
+    $htmlOutputPath =  $infos['dirname'] . "/" . $infos['filename'] . ".html";
 
     if ($extension === 'docx') {
-        $infos = pathinfo($path);
-        $htmlOutputPath =  $infos['dirname'] . "/" . $infos['filename'] . ".html";
         $parameterCommand = '-o ';
+    }
+
+    shell_exec($command . ' ' .  $path . ' ' . $parameterCommand . $htmlOutputPath);
+
+    $htmlToText = getWordsFileHtml($htmlOutputPath);
+    $words = preg_split('/[^A-Za-zÀ-ÖØ-öø-ÿ]+/u', $htmlToText, -1, PREG_SPLIT_NO_EMPTY);
+
+    $cleanedWords = encodingData($words);
+    $cleanedWords = array_map(static fn (string $word) => str_replace('&#160;', '', $word), $cleanedWords);
+
+    if ($extension !== 'docx') {
+        unlink($htmlOutputPath);
+    }
+
+    if ($extension === 'docx') {
         unlink($infos['dirname'] . "/" . $infos['basename']);
     }
 
-    var_dump($htmlOutputPath);
-    shell_exec($command . ' ' .  $path . ' ' . $parameterCommand . $htmlOutputPath);
-
-    $htmlContent = strtolower(file_get_contents($htmlOutputPath));
-    $textWithoutTags = strip_tags($htmlContent);
-    $words = preg_split('/[^A-Za-zÀ-ÖØ-öø-ÿ]+/u', $textWithoutTags, -1, PREG_SPLIT_NO_EMPTY);
-
-    $cleanedWords = encodingData($words);
-    $cleanedWords = array_map(function (string $word) {
-        return str_replace('&#160;', '', $word);
-    }, $cleanedWords);
-    if ($extension !== 'docx') {
-        unlink('./output.html');
-    }
-
     return implode(' ', $cleanedWords);
+}
+
+function getPreviewText(string $path): string
+{
+    $contentFile = getContentFile($path);
+
+    return str_split($contentFile, 200)[0] . '...';
 }

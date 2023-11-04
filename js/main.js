@@ -25,7 +25,7 @@ $(document).ready(function () {
         showContentModal(idDocument)
     });
     showLoader()
-});
+})
 
 function showLoader() {
     const loaderButton = $("<div class='spinner-border text-primary' role='status'>" +

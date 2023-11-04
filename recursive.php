@@ -13,7 +13,7 @@
     <title>Document</title>
 </head>
 
-<div class="text-center">
+<div class="container text-center mt-5">
     <?php
         include 'utils.php';
         $path = upload($_FILES['uploads']);

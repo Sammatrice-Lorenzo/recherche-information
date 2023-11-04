@@ -1,3 +1,4 @@
+<!DOCTYPE>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -35,28 +36,49 @@
             </div>
         </form>
     </div>
-    <?php
-        include 'utils.php';
-        include 'modal.html';
-
-        $documentsFind = findWord($cnx, $_GET['word']);
-    ?>
-
     <div class="container text-center">
+        <?php
+            include 'utils.php';
+            include 'modal.html';
+
+            $documentsFind = findWord($cnx, $_GET['word']);
+            echo "<div>";
+            echo "<span class='mx-0'>
+                Nombre de documents trouvés pour: '<b>" . $_GET['word'] . "' :</b> "
+                . str_pad(count($documentsFind), 15, '  ', STR_PAD_LEFT);
+            echo "</span>";
+            echo "</div>";
+            echo "<br>";
+            
+
+            $similarWords = getSimilarWords($cnx, $_GET['word']);
+            if (!$documentsFind && $similarWords) {
+
+                echo "<div>";
+                    echo "<span>Vous chercher peut être : </span>";
+                    echo "<br>";
+                    foreach ($similarWords as $similarWord) {
+                        echo "<a href='showDocumentFind.php?word=" . $similarWord['mot'] ."'>"
+                            . $similarWord['mot'] .
+                        "</a>";
+                        echo "<br>";
+                    }
+                echo "</div>";
+                echo "<br>";
+            }
+        ?>
         <table class="table table-bordered table-hover text-center mx-auto" style="max-width: 800px;">
             <thead>
                 <tr>
                     <th>Nom du fichier</th>
                     <th>Mot</th>
                     <th>Fréquence</th>
+                    <th>Aperçu du texte</th>
                     <th>Nuage de mots</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                    echo "Nombre de documents trouvés pour '" . $_GET['word'] . "': " . count($documentsFind);
-                    echo  "<br><br>";
-
                     $page = $_GET['page'] ?? 1;
                     $nbElementInPage = 5;
                     
@@ -86,7 +108,10 @@
                             </td>";
                             echo "<td>$document[2]</td>";
                             echo "<td>$document[1]</td>";
-                            echo "<td data-document=" . $document[4] . ">
+                            echo "<td>";
+                                echo getPreviewText($document[3]);
+                            "</td>";
+                            echo "<td data-document=" . $document[4] . " style='width:150px;'>
                                 <a id='btn-cloud' class='btn btn-primary btn-cloud' role='button'>
                                     Nuage de mots
                                 </a>
