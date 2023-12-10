@@ -123,7 +123,7 @@ function getContentFile(string $path): string
  * Va permettre la tokenisation en gardent que les mots clé et supprimer les stopWords
  *
  * @param string $path
- * @return array
+ * @return array<int, string[]|string>
  */
 function tokenisation(string $path): array
 {
@@ -140,7 +140,12 @@ function tokenisation(string $path): array
 
     $words = array_count_values(array_diff($tokenisation, $stopWords));
 
-    return transformWordsWithLemmatization($words);
+    $wordsLemmatized = transformWordsWithLemmatization($words);
+
+    return [
+        $wordsLemmatized,
+        $contentFile
+    ];
 }
 
 function getWordsFileXML(string $path): string
@@ -260,6 +265,10 @@ function getLemmatization(): array
     return $lemmatisation;
 }
 
+/**
+ * @param string[] $words
+ * @return string[]
+ */
 function transformWordsWithLemmatization(array $words): array
 {
     $wordsLemmatized = [];
@@ -309,9 +318,7 @@ function getWordsFilePDForDoc(string $path, string $command, string $extension):
     return implode(' ', $cleanedWords);
 }
 
-function getPreviewText(string $path): string
+function getPreviewText(string $contentFile): string
 {
-    $contentFile = getContentFile($path);
-
     return str_split($contentFile, 200)[0] . '...';
 }

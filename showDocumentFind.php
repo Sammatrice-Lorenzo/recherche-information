@@ -43,13 +43,12 @@
 
             $documentsFind = findWord($cnx, $_GET['word']);
             echo "<div>";
-            echo "<span class='mx-0'>
-                Nombre de documents trouvés pour: '<b>" . $_GET['word'] . "' :</b> "
-                . str_pad(count($documentsFind), 15, '  ', STR_PAD_LEFT);
+            echo "<span class='mx-5' style='display:flex; position:relative; left: 15%'>
+                Nombre de documents trouvés pour: '<b>" . $_GET['word'] . "':  </b>    "
+                . '  ' . str_pad(count($documentsFind), 15, '  ', STR_PAD_LEFT);
             echo "</span>";
             echo "</div>";
             echo "<br>";
-            
 
             $similarWords = getSimilarWords($cnx, $_GET['word']);
             if (!$documentsFind && $similarWords) {
@@ -87,7 +86,7 @@
                     
                     // Calcul du nombre total de pages
                     $totalPages = ceil(count($documentsFind) / $nbElementInPage);
-                    
+
                     // On vérifie que la page sélectionnée ou sur l'url ne dépasse pas le nb de pages total
                     if ($page > $totalPages) {
                         $page = $totalPages;
@@ -109,7 +108,7 @@
                             echo "<td>$document[2]</td>";
                             echo "<td>$document[1]</td>";
                             echo "<td>";
-                                echo getPreviewText($document[3]);
+                                echo $document[5];
                             "</td>";
                             echo "<td data-document=" . $document[4] . " style='width:150px;'>
                                 <a id='btn-cloud' class='btn btn-primary btn-cloud' role='button'>

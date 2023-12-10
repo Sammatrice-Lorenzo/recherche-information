@@ -2,11 +2,12 @@
 
 include 'cnx.php';
 
-function insertionDocument(PDO $cnx, string $title, string $pathFile): void
+function insertionDocument(PDO $cnx, string $title, string $pathFile, string $contentFile): void
 {
-    $insertWord = $cnx->prepare('INSERT INTO document (titre, path) VALUES (?, ?)');
+    $insertWord = $cnx->prepare('INSERT INTO document (titre, path, content) VALUES (?, ?, ?)');
     $insertWord->bindValue(1, $title);
     $insertWord->bindValue(2, $pathFile);
+    $insertWord->bindValue(3, $contentFile);
     $insertWord->execute();
 }
 
@@ -60,11 +61,13 @@ function getWordId(PDO $cnx, string $word): int
  */
 function insertionWordsAndDocument(string $path, string $title, PDO $cnx): void
 {
-    $words = tokenisation($path);
+    /** @var string $contentFile */
+    [$words, $contentFile] = tokenisation($path);
+    $contentPreview = getPreviewText($contentFile);
 
     getTableUploadedFiles($words, $path, $title);
 
-    insertionDocument($cnx, $title, $path);
+    insertionDocument($cnx, $title, $path, $contentPreview);
     $idDoc = getDocumentId($cnx, $title);
 
     foreach ($words as $word => $frequence) {
@@ -112,7 +115,8 @@ function findWord(PDO $cnx, string $word): array
                 $wordAndDocument['frequence'],
                 $wordBdd['mot'],
                 $doc['path'],
-                $wordAndDocument['idDocument']
+                $wordAndDocument['idDocument'],
+                $doc['content']
             ];
         }
     }
