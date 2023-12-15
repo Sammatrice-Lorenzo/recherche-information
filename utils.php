@@ -225,6 +225,7 @@ function getTableUploadedFiles(array $wordsFiltered, string $path, string $title
 
 function getHeaderTableFilesUploaded(): void
 {
+    echo '<h1>Résultat de l\'indexation </h1><br>';
     echo "<table id='doc-upload' class='table table-bordered table-hover text-center mx-auto' style='max-width: 800px;'>
             <thead>
                 <tr>

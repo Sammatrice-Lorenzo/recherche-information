@@ -14,12 +14,27 @@
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="./js/main.js"></script>
+    <script src="./js/removeFiles.js"></script>
     <title>Document</title>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Suppression informations
+                </a>
+                <ul class="dropdown-menu ms-auto list-unstyled">
+                    <li><a class="btn btn-danger btn-remove" href="#">Suppression en base</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    
 
     <div class="container mt-5">
-        <div class="card d-flex justify-content-center text-center">
+          
+        <div class="card d-flex justify-content-center text-center mt-3">
             <div class="card-header">
                 Récursivité de dossier
             </div>
